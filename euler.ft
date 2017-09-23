@@ -1,0 +1,25 @@
+: newton-cooling-law ( f: temp -- f: temp' )
+  20e f-  -0.07e f* ;
+
+: simple
+  1.0e f* ;
+
+: euler ( fstep fy0 xt_math_function nend -- )
+  1+ 0 do
+    cr fover i s>f f* f. fdup f. \ carriage return, print index, print result.
+    fover fover \ fstack=fstep fy0 fstep fy0
+    dup execute \ duplicate ny0 value, copy up the execution token xt, execute xt. fstack=fstep fy0 fstep fxt
+    f* f+ \ actual euler method. fstack=fstep (fy0 + fstep * fxt)
+    loop \ step stuff for loop.
+  drop fdrop fdrop ;
+
+: eulerold ( fy0 xt_math_function nstep nend -- )
+  1+ 0 do
+    cr i . fdup f. \ carriage return, print index, print result. fs=fy0 s=xt nstep
+    fdup over execute \ duplicate ny0 value, copy up the execution token xt, execute xt. fs=fy0 fxt s=xt nstep
+    dup s>f f* f+ \ actual euler method. fs=fy0 + fxt * fstep s=xt nstep
+  dup +loop \ step stuff for loop.
+  2drop fdrop ;
+
+: usage_example
+  1e ' simple 1 4 euler ;
